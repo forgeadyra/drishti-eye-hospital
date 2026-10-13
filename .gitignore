@@ -27,3 +27,4 @@ dist-ssr/
 stats.json
 qa-artifacts/
 lighthouse-reports/
+gitleaks-report.json
