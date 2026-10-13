@@ -231,6 +231,31 @@ PASS performance 99 (≥85) · accessibility 100 (≥95) · best-practices 100 (
 - the Fraunces italic face dropped (−47 KB);
 - SplitText's `aria-label` on `<p>` removed.
 
+## Live deploy — https://drishti-eye-hospital.netlify.app (2026-10-13)
+
+The project was deployed with the Netlify connector, which published straight to the main `*.netlify.app` URL.
+`ALLOWED_ORIGIN` is set. **No secrets are set yet** (Turnstile, Upstash, Resend).
+
+| Check on the live URL | Result |
+|---|---|
+| `curl -I /` → CSP, nosniff, Referrer-Policy, Permissions-Policy, XFO DENY, COOP | **PASS** |
+| HSTS | **NOTE**: Netlify serves its own `max-age=31536000; includeSubDomains; preload` on `*.netlify.app`, overriding ours (63072000). Re-check after attaching the custom domain. |
+| `http://` → `https://` | **PASS** (301) |
+| Unknown path → `404.html` with status 404 | **PASS** |
+| `.env`, `.git/config`, `package.json`, `netlify.toml`, `vite.config.ts`, `src/main.tsx`, `tsconfig.json`, `*.js.map` | **PASS** (all 404) |
+| `robots.txt` / `sitemap.xml` use the real site URL | **PASS** |
+| Function: foreign Origin 403 · GET 405 · `text/plain` 415 · 11 KB body 413 | **PASS** |
+| Function: valid request → 500 (fails closed while secrets are missing) | **PASS** (expected until secrets are added) |
+| Lighthouse mobile, 3 runs (median) | Perf **97**, A11y **100**, SEO **100**, LCP **1.3 s**, CLS **0** · Best Practices **92 → FAIL** (see below) |
+| Browser QA (23 checks) | 17/23. All 6 failures are the console-error checks, caused by the same issue below. |
+
+**FAIL: CSP blocks a script Netlify injects.**
+- Netlify adds `<script async src="/.netlify/scripts/hud?variant=public">` to the served HTML; it is not in `dist/`.
+- That toolbar builds an `srcdoc` iframe containing an inline `<style>` and an inline `<script>`. The iframe inherits the site's CSP, so the browser correctly blocks both and logs console errors. That costs Best Practices points and caused one Lighthouse run with CLS 0.248.
+- The site's own inline CSS matches its CSP hash (`sha256-e76Wqj…`).
+- **Fix (dashboard, owner action):** disable the Netlify collaboration toolbar / Drawer for this project under Project configuration → Build & deploy → Continuous deployment → Collaboration tools → Configure. See [Netlify Drawer](https://docs.netlify.com/site-deploys/troubleshoot-the-netlify-drawer/) and [Heads-up Display](https://docs.netlify.com/deploy/review-deploys/heads-up-display/).
+- The CSP is intentionally **not** relaxed to accommodate it.
+
 ## Honest caveats
 
 1. **Lighthouse doesn't measure the 3D scene.**
