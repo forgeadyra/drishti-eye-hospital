@@ -9,7 +9,28 @@ contact form.
 - GSAP with ScrollTrigger and SplitText for scroll motion, Framer Motion for UI micro-interactions, and Lenis for smooth scrolling.
 - One Netlify Function for the contact form: zod, Cloudflare Turnstile, Upstash rate limiting and Resend email.
 
-Security and verification evidence is in [SECURITY_REPORT.md](SECURITY_REPORT.md).
+**Live:** https://drishti-eye-hospital.netlify.app
+
+## Documentation
+
+| Doc | For |
+|---|---|
+| [docs/CONTENT_GUIDE.md](docs/CONTENT_GUIDE.md) | Changing text, hours, services and photos (no coding needed) |
+| [SECURITY_REPORT.md](SECURITY_REPORT.md) | PASS/FAIL evidence for every security and performance requirement |
+| [SECURITY.md](SECURITY.md) | How to report a vulnerability; what to do if a secret leaks |
+| [CHANGELOG.md](CHANGELOG.md) | Release history |
+| [.env.example](.env.example) | Environment variable names (no values) |
+
+## CI
+
+`.github/workflows/ci.yml` runs on every push and pull request:
+- lint;
+- typecheck;
+- the full build, including every `verify-dist` gate;
+- the 34 contact-function security tests;
+- `npm audit` (fails on high or critical);
+- depcheck;
+- a gitleaks scan of the full history.
 
 ---
 
@@ -22,7 +43,7 @@ npm run build      # production build + all build gates
 npm run preview    # http://localhost:4173, serves dist/ with the exact production headers
 ```
 
-Requires Node ≥ 22.
+Requires Node ≥ 22 to build; Node ≥ 23.6 to run `npm run test:contact` (it imports the TypeScript function directly). CI uses Node 24.
 
 ## Editing content
 
@@ -123,3 +144,11 @@ src/sections/               page sections
 src/components/             header, intro, cursor, lightbox, magnetic/tilt, etc.
 404.html                    standalone not-found page (served with status 404 by Netlify)
 ```
+
+## Continuous deployment
+
+The live site was created with the Netlify connector as a manual deploy. To redeploy on every push, go to Netlify, then **Project configuration → Build & deploy → Continuous deployment → Link repository**, and pick this GitHub repo. The build settings come from `netlify.toml`.
+
+## License
+
+Proprietary. © Drishti Eye Hospital. All rights reserved. This code isn't licensed for reuse.
