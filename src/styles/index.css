@@ -1,0 +1,145 @@
+@import 'tailwindcss';
+@import 'lenis/dist/lenis.css';
+
+/* Metric-matched fallbacks (Capsize): text laid out in the fallback font occupies the same space
+   as the web font, so the font swap causes no layout shift (CLS). */
+@font-face {
+  font-family: 'Fraunces Fallback';
+  src: local('Georgia');
+  ascent-override: 92.9623%;
+  descent-override: 24.2386%;
+  size-adjust: 105.2039%;
+}
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial'), local('ArialMT');
+  ascent-override: 90.4365%;
+  descent-override: 22.518%;
+  line-gap-override: 0%;
+  size-adjust: 107.1194%;
+}
+
+/* ─── Design tokens ─────────────────────────────────────────────── */
+@theme {
+  --font-display: 'Fraunces Variable', 'Fraunces Fallback', ui-serif, Georgia, serif;
+  --font-sans: 'Inter Variable', 'Inter Fallback', ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #06111c;
+  --color-navy: #0b1b2b;
+  --color-navy-2: #12283d;
+  --color-navy-3: #1a3550;
+  --color-cream: #f4efe6;
+  --color-muted: #a9b8c6;
+  --color-accent: #5eead4;
+  --color-accent-strong: #2dd4bf;
+  --color-gold: #e9c27a;
+  --color-danger: #fca5a5;
+
+  /* Mirrors src/motion/config.ts curves — keep in sync */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-ink);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-ink font-sans text-cream antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-navy);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  /* Anchor targets clear the sticky header */
+  section[id] {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@utility container-x {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+}
+@utility eyebrow {
+  @apply font-sans text-xs font-semibold tracking-[0.22em] text-accent uppercase;
+}
+@utility h-display {
+  @apply font-display font-light tracking-tight text-balance;
+}
+@utility btn {
+  @apply relative inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold transition-[background-color,color,border-color,box-shadow] duration-300 select-none;
+  transition-timing-function: var(--ease-out);
+}
+@utility btn-primary {
+  @apply btn bg-accent text-navy hover:bg-cream;
+}
+@utility btn-ghost {
+  @apply btn border border-white/20 text-cream hover:border-accent hover:text-accent;
+}
+@utility card {
+  @apply rounded-3xl border border-white/10 bg-navy-2/60;
+}
+/* Placeholder values ({{LIKE_THIS}}) are styled so they can't be missed. */
+@utility ph {
+  @apply rounded bg-gold/15 px-1 font-mono text-[0.85em] text-gold [overflow-wrap:anywhere];
+}
+@utility sr-only-focusable {
+  &:not(:focus) {
+    @apply sr-only;
+  }
+}
+
+/* GSAP-driven reveal helpers. Content is visible by default (no-JS, SSR, reduced motion). */
+.mask-line {
+  display: block;
+  overflow: clip;
+  padding-bottom: 0.08em;
+}
+.mask-line > span {
+  display: block;
+}
+
+/* Custom cursor only renders on fine pointers; hide native cursor never (a11y). */
+@media (hover: none), (pointer: coarse) {
+  .cursor-follower {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Tilt card highlight follows the pointer (--mx/--my set by TiltCard via CSSOM). */
+.tilt-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-out);
+  background: radial-gradient(
+    28rem circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in oklab, var(--color-accent) 14%, transparent),
+    transparent 60%
+  );
+}
+.tilt-card:hover::before {
+  opacity: 1;
+}

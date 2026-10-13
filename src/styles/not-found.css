@@ -1,0 +1,88 @@
+/* Standalone 404 styles: no Tailwind (keeps the page tiny). */
+@import '@fontsource-variable/fraunces/wght.css';
+@import '@fontsource-variable/inter/wght.css';
+
+:root {
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  color-scheme: dark;
+  background: #06111c;
+}
+body {
+  margin: 0;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 35%, #12283d, #06111c 70%);
+  color: #f4efe6;
+  font-family: var(--font-sans);
+}
+.nf {
+  padding: 2rem 1rem;
+  text-align: center;
+  max-width: 36rem;
+}
+.nf-eye {
+  color: #5eead4;
+  margin-inline: auto;
+}
+.nf-iris {
+  transform-origin: 16px 16px;
+  animation: nf-blur 3s ease-in-out infinite alternate;
+}
+.nf-code {
+  margin: 1.5rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 18vw, 8rem);
+  line-height: 1;
+  font-weight: 300;
+  color: #e9c27a;
+  filter: blur(2px);
+  animation: nf-focus 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+h1 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  margin: 1rem 0 0.5rem;
+}
+.nf-copy {
+  color: #a9b8c6;
+}
+.nf-btn {
+  display: inline-flex;
+  margin-top: 2rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  background: #5eead4;
+  color: #0b1b2b;
+  font-weight: 600;
+  text-decoration: none;
+}
+.nf-btn:hover {
+  background: #f4efe6;
+}
+.nf-btn:focus-visible {
+  outline: 2px solid #5eead4;
+  outline-offset: 3px;
+}
+@keyframes nf-focus {
+  to {
+    filter: blur(0);
+  }
+}
+@keyframes nf-blur {
+  to {
+    transform: scale(0.8);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nf-code,
+  .nf-iris {
+    animation: none;
+    filter: none;
+  }
+}
